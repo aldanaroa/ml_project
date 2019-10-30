@@ -49,3 +49,5 @@ def SVC(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, i
 
     print("Training SVC ...")
     random_search_cv.fit(x_train, y_train)
+
+    return random_search_cv.best_estimator_, random_search_cv.best_params_

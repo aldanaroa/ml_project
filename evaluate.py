@@ -6,38 +6,37 @@ import regression_cv
 import data_processing
 
 
+def evaluate_classifier(x_train, x_test, y_train, y_test, model, params, dataset_name, model_name):
+    y_predict = model.predict(x_test)
+    accuracy = sklearn.metrics.accuracy_score(y_test, y_predict)
+    print("--{0}:".format(model_name))
+    print("\t{0} accuracy: {1:.2f}%".format(dataset_name, accuracy * 100))
+    if params is not None and len(params.keys()) > 0:
+        print("\tHyperparam:")
+        for hyperparam in params.keys():
+            print("\t\t {0}: {1}".format(hyperparam, params[hyperparam]))
+
+
 def diabete_retinopathy():
     print("Started training classifiers on diabete retinopathy data set.")
     x_train, x_test, y_train, y_test = data_processing.diabetic_retinopathy()
 
     # DECISION TREE
-    ct_best_model, ct_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=4, iterations=20)
-    y_predict_dt = ct_best_model.predict(x_test)
-    dt_accuracy = sklearn.metrics.accuracy_score(y_test, y_predict_dt)
-    print("--DECISION TREE:")
-    print("\tDiabetic retinopathy accuracy: {0:.2f}%".format(dt_accuracy * 100))
-    print("\tHyperparam max_depth: {0}".format(ct_params['max_depth']))
+    dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Diabete retinopathy",
+                        "DECISION TREE")
 
     # RANDOM FOREST
     rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=100, fold=4,
                                                                iterations=20)
-    y_predict_rf = rf_best_model.predict(x_test)
-    rf_accuracy = sklearn.metrics.accuracy_score(y_test, y_predict_rf)
-    print("--RANDOM FOREST:")
-    print("\tDiabetic retinopathy accuracy: {0:.2f}%".format(rf_accuracy * 100))
-    print("\tHyperparam n_estimators: {0}".format(rf_params['n_estimators']))
+    evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params, "Diabete retinopathy",
+                        "RANDOM FOREST")
 
-    # SVM
+    # SVC
     svc_best_model, svc_params = classification_cv.SVC(x_train, y_train, ['linear', 'rbf'], 0.01, 10, 1, 1000, fold=4,
                                                        iterations=20)
-    y_predict_svc = svc_best_model.predict(x_test)
-    svc_accuracy = sklearn.metrics.accuracy_score(y_test, y_predict_svc)
-    print("--SVM:")
-    print("\tDiabetic retinopathy accuracy: {0:.2f}%".format(svc_accuracy * 100))
-    print("\tHyperparams n_estimators: {0}".format(svc_params['n_estimators']))
-    print("\tkernel: {0}".format(svc_params['kernel']))
-    print("\tC: {0}".format(svc_params['C']))
-    print("\tgamma: {0}".format(svc_params['gamma']))
+    evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Diabete retinopathy",
+                        "SVC")
 
 
 def default_credit_card():
@@ -65,4 +64,4 @@ def red_wine_quality():
     print("\tWine quality prediction accuracy: {0:.2f}%".format(accuracy * 100))
 
 
-red_wine_quality()
+diabete_retinopathy()
