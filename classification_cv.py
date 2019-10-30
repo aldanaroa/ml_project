@@ -34,3 +34,18 @@ def random_forest(x_train, y_train, max_estimator=100, fold=4, iterations=20):
     random_search_cv.fit(x_train, y_train)
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
+
+
+def SVC(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, iterations=20):
+    svc = sklearn.svm.SVC(random_state=0)
+    params = {
+        "C": scipy.stats.reciprocal(C_min, C_max),
+        "gamma": scipy.stats.reciprocal(gamma_min, gamma_max),
+        "kernel": kernels
+    }
+
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=1, cv=fold,
+                                                                  random_state=0, n_iter=iterations)
+
+    print("Training SVC ...")
+    random_search_cv.fit(x_train, y_train)
