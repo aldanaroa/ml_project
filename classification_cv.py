@@ -51,3 +51,53 @@ def SVC(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, i
     random_search_cv.fit(x_train, y_train)
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
+
+
+def KNC(x_train, y_train, neighbors=10, fold=4, iterations=20):
+    knc = sklearn.neighbors.KNeighborsClassifier(random_state=0)
+    params = {
+        "n_neighbors": range(1, neighbors + 1),
+        "weights": ['uniform', 'distance']
+    }
+
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(knc, param_distributions=params, verbose=1, cv=fold,
+                                                                  random_state=0, n_iter=iterations)
+
+    print("Training KNC ...")
+    random_search_cv.fit(x_train, y_train)
+
+    return random_search_cv.best_estimator_, random_search_cv.best_params_
+
+
+def logistic_regression(x_train, y_train, C_min, C_max, fold=4, iterations=20):
+    lrc = sklearn.linear_model.LogisticRegression(random_state=0)
+    params = {
+        "penalty": ['l1', 'l2', 'elasticnet', 'none'],
+        "C": scipy.stats.reciprocal(C_min, C_max),
+        "solver": ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
+    }
+
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(lrc, param_distributions=params, verbose=1, cv=fold,
+                                                                  random_state=0, n_iter=iterations)
+
+    print("Training Logistic Regression ...")
+    random_search_cv.fit(x_train, y_train)
+
+    return random_search_cv.best_estimator_, random_search_cv.best_params_
+
+
+def ada_boost_classifier(x_train, y_train, estimator, no_estimators, fold=4, iterations=20):
+    ada_boost = sklearn.ensemble.AdaBoostClassifier(random_state=0, base_estimator=estimator)
+    params = {
+        "n_estimators": range(1, no_estimators + 1),
+        "algorithm": ['SAMME', 'SAMME.R']
+    }
+
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(ada_boost, param_distributions=params, verbose=1,
+                                                                  cv=fold,
+                                                                  random_state=0, n_iter=iterations)
+
+    print("Training Logistic Regression ...")
+    random_search_cv.fit(x_train, y_train)
+
+    return random_search_cv.best_estimator_, random_search_cv.best_params_
