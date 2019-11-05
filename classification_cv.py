@@ -4,6 +4,7 @@ import numpy as np
 import sklearn.tree
 import sklearn.ensemble
 import sklearn.model_selection
+import  sklearn.neural_network
 import scipy.stats
 
 
@@ -94,7 +95,32 @@ def ada_boost_classifier(x_train, y_train, estimator, no_estimators, fold=4, ite
     random_search_cv = sklearn.model_selection.RandomizedSearchCV(ada_boost, param_distributions=params, verbose=0,
                                                                   cv=fold, random_state=0, n_iter=iterations)
 
-    print("Training Logistic Regression ...")
+    print("Training Ada Boost ...")
+    random_search_cv.fit(x_train, y_train)
+
+    return random_search_cv.best_estimator_, random_search_cv.best_params_
+
+
+def MLPClassifier(x_train, y_train,
+                  hidden_layer_sizes,
+                  alphas, max_iter,
+                  fold=4, iterations=20):
+    nn = sklearn.neural_network.MLPClassifier(random_state=0,
+                                              solver='sgd',
+                                              batch_size=int(x_train.shape[0] / 50),
+                                              learning_rate_init=0.01,
+                                              momentum=0.9,
+                                              max_iter=max_iter)
+    params = {
+        "hidden_layer_sizes": hidden_layer_sizes,
+        "alpha": alphas,
+        "max_iter": max_iter
+    }
+
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(nn, param_distributions=params, verbose=0,
+                                                                  cv=fold, random_state=0, n_iter=iterations)
+
+    print("Training Neural Networks ...")
     random_search_cv.fit(x_train, y_train)
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
