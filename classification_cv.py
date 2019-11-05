@@ -13,8 +13,8 @@ def decision_trees(x_train, y_train, max_depth=10, fold=4, iterations=20):
         "max_depth": range(1, max_depth + 1)
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(dtc, param_distributions=params, verbose=1, cv=fold,
-                                                                  random_state=0, n_iter=iterations)
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(dtc, param_distributions=params, verbose=0, cv=fold,
+                                                                  random_state=0, n_iter=min(max_depth, iterations))
     print("Training decision tree classifier ...")
     random_search_cv.fit(x_train, y_train)
 
@@ -27,8 +27,8 @@ def random_forest(x_train, y_train, max_estimator=100, fold=4, iterations=20):
         "n_estimators": range(1, max_estimator + 1)
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(rf, param_distributions=params, verbose=1, cv=fold,
-                                                                  random_state=0, n_iter=iterations)
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(rf, param_distributions=params, verbose=0, cv=fold,
+                                                                  random_state=0, n_iter=min(max_estimator, iterations))
 
     print("Training random forest classifier ...")
     random_search_cv.fit(x_train, y_train)
@@ -44,7 +44,7 @@ def SVC(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, i
         "kernel": kernels
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=1, cv=fold,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=0, cv=fold,
                                                                   random_state=0, n_iter=iterations)
 
     print("Training SVC ...")
@@ -54,13 +54,13 @@ def SVC(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, i
 
 
 def KNC(x_train, y_train, neighbors=10, fold=4, iterations=20):
-    knc = sklearn.neighbors.KNeighborsClassifier(random_state=0)
+    knc = sklearn.neighbors.KNeighborsClassifier()
     params = {
         "n_neighbors": range(1, neighbors + 1),
         "weights": ['uniform', 'distance']
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(knc, param_distributions=params, verbose=1, cv=fold,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(knc, param_distributions=params, verbose=0, cv=fold,
                                                                   random_state=0, n_iter=iterations)
 
     print("Training KNC ...")
@@ -70,14 +70,12 @@ def KNC(x_train, y_train, neighbors=10, fold=4, iterations=20):
 
 
 def logistic_regression(x_train, y_train, C_min, C_max, fold=4, iterations=20):
-    lrc = sklearn.linear_model.LogisticRegression(random_state=0)
+    lrc = sklearn.linear_model.LogisticRegression(random_state=0, solver='lbfgs')
     params = {
-        "penalty": ['l1', 'l2', 'elasticnet', 'none'],
         "C": scipy.stats.reciprocal(C_min, C_max),
-        "solver": ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(lrc, param_distributions=params, verbose=1, cv=fold,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(lrc, param_distributions=params, verbose=0, cv=fold,
                                                                   random_state=0, n_iter=iterations)
 
     print("Training Logistic Regression ...")
@@ -93,9 +91,8 @@ def ada_boost_classifier(x_train, y_train, estimator, no_estimators, fold=4, ite
         "algorithm": ['SAMME', 'SAMME.R']
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(ada_boost, param_distributions=params, verbose=1,
-                                                                  cv=fold,
-                                                                  random_state=0, n_iter=iterations)
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(ada_boost, param_distributions=params, verbose=0,
+                                                                  cv=fold, random_state=0, n_iter=iterations)
 
     print("Training Logistic Regression ...")
     random_search_cv.fit(x_train, y_train)
