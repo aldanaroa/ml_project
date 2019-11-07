@@ -53,6 +53,11 @@ def diabete_retinopathy():
     knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
     evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Diabete retinopathy", "KNN")
 
+    # GaussianNB
+    nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Diabete retinopathy",
+                        "Gaussian NB")
+
     # MLP
     mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
                                                                  hidden_layer_sizes=[(), (5,)],
@@ -105,25 +110,30 @@ def breast_cancer():
 
     # DECISION TREE
     dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Diabete retinopathy",
+    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Breast cancer",
                         "DECISION TREE")
 
     # RANDOM FOREST
     rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=20, fold=4,
                                                                iterations=20)
     evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params,
-                        "Diabete retinopathy", "RANDOM FOREST")
+                        "Breast cancer", "RANDOM FOREST")
 
     # SVC
     svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
                                                        ['linear', 'poly', 'rbf', 'sigmoid'],
                                                        0.01, 100, 1, 1000, fold=4,
                                                        iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Diabete retinopathy", "SVC")
+    evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Breast cancer", "SVC")
 
     # KNN
     knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Diabete retinopathy", "KNN")
+    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Breast cancer", "KNN")
+
+    # GaussianNB
+    nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Breast cancer",
+                        "Gaussian NB")
 
     # MLP
     mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
@@ -132,7 +142,7 @@ def breast_cancer():
                                                                  max_iter=[10, 20, 50, 100],
                                                                  fold=4, iterations=20)
     evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
-                        "Diabete retinopathy", "MLP")
+                        "Breast cancer", "MLP")
 
 
 def red_wine_quality():

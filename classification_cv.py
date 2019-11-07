@@ -1,10 +1,12 @@
 # Creator: Hoang-Dung Do
 
+import math
 import numpy as np
 import sklearn.tree
 import sklearn.ensemble
 import sklearn.model_selection
-import  sklearn.neural_network
+import sklearn.neural_network
+import sklearn.naive_bayes
 import scipy.stats
 
 
@@ -100,6 +102,20 @@ def ada_boost_classifier(x_train, y_train, estimator, no_estimators, fold=4, ite
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
 
+
+def GaussianNB(x_train, y_train, fold=4, iterations=20):
+    nb = sklearn.naive_bayes.GaussianNB()
+    params = {
+        "var_smoothing": scipy.stats.reciprocal(math.exp(-10), math.exp(-8))
+    }
+
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(nb, param_distributions=params, verbose=0,
+                                                                  cv=fold, random_state=0, n_iter=iterations)
+
+    print("Training Ada Boost ...")
+    random_search_cv.fit(x_train, y_train)
+
+    return random_search_cv.best_estimator_, random_search_cv.best_params_
 
 def MLPClassifier(x_train, y_train,
                   hidden_layer_sizes,
