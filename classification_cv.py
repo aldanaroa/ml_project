@@ -117,6 +117,7 @@ def GaussianNB(x_train, y_train, fold=4, iterations=20):
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
 
+
 def MLPClassifier(x_train, y_train,
                   hidden_layer_sizes,
                   alphas, max_iter,
