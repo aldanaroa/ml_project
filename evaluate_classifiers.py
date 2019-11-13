@@ -3,6 +3,7 @@
 import numpy as np
 import sklearn.metrics
 import matplotlib.pyplot as plt
+import pandas as pd
 import classification_cv
 import regression_cv
 import data_processing
@@ -155,5 +156,50 @@ def breast_cancer():
     evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
                         "Breast cancer", "MLP")
 
+def adult():
+    print("Started training classifiers on Adult data set.")
+    x_train, x_test, y_train, y_test = data_processing.adult()
 
-default_credit_card()
+    # LR
+    lr_best_model, lr_params = classification_cv.logistic_regression(x_train, y_train, C_min=0.01, C_max=10, fold=3,
+                                                                         iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "Adult",
+                            "Logistic Regression")
+
+
+
+    # DECISION TREE
+    dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Adult",
+                        "DECISION TREE")
+
+    # RANDOM FOREST
+    rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=20, fold=4,
+                                                               iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params,
+                        "Adult", "RANDOM FOREST")
+
+    # SVC
+    #svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
+                                                       ['linear', 'poly', 'rbf', 'sigmoid'],
+                                                       0.01, 100, 1, 1000, fold=4,
+                                                       iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Adult", "SVC")
+
+    # KNN
+    knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Adult", "KNN")
+
+    # GaussianNB
+    nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Adult",
+                        "Gaussian NB")
+
+    # MLP
+    mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
+                                                                 hidden_layer_sizes=[(), (10,)],
+                                                                 alphas=[0.01, 0.05, 0.5, 1],
+                                                                 max_iter=[10, 20, 50, 100],
+                                                                 fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
+                        "Adult", "MLP")
