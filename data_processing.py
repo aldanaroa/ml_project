@@ -7,6 +7,7 @@ import sklearn.preprocessing as preprocessing
 import data_util
 import re
 
+
 # ===================================CLASSIFICATION============================================ #
 
 def diabetic_retinopathy(test_size=0.2):
@@ -36,46 +37,46 @@ def cancer_type_num(char):
     return 0
 
 
+def clean_1(x):
+    return x.strip()
+
 
 def adult():
-    def clean_1(x) :
-        return x.strip()
+    names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status', 'occupation', 'relationship',
+             'race', 'sex',
+             'capital-gain', 'capital-loss', 'hours-per-week', 'native-country', 'income']
+    data = pd.read_csv('data/classification/Adult/adult.data', delimiter=',', header=None, names=names, na_values=['?'])
+    test = pd.read_csv('data/classification/Adult/adult.test', delimiter=',', header=None, names=names, skiprows=1,
+                       na_values=['?'])
 
-    names = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex',
-            'capital-gain','capital-loss','hours-per-week','native-country','income']
-    data = pd.read_csv('data/classification/Adult/adult.data', delimiter=',', header = None, names = names, na_values=['?'])
-    test = pd.read_csv('data/classification/Adult/adult.test', delimiter=',', header = None, names = names, skiprows = 1, na_values=['?'])
-
-    for ser in data.select_dtypes(include = object):
+    for ser in data.select_dtypes(include=object):
         data[ser].map(clean_1)
-    for ser in test.select_dtypes(include = object):
+    for ser in test.select_dtypes(include=object):
         test[ser].map(clean_1)
 
-    pattern= r'([^?\s.]{1,20})' #eliminate spaces(again), ? and period
+    pattern = r'([^?\s.]{1,20})'  # eliminate spaces(again), ? and period
     re.compile(pattern)
-    for ser in data.select_dtypes(include = object):
-        data[ser]= data[ser].str.extract(pattern)
+    for ser in data.select_dtypes(include=object):
+        data[ser] = data[ser].str.extract(pattern)
 
-    for ser in test.select_dtypes(include = object):
-        test[ser]= test[ser].str.extract(pattern)
+    for ser in test.select_dtypes(include=object):
+        test[ser] = test[ser].str.extract(pattern)
 
-    data.dropna(inplace = True)
-    test.dropna(inplace = True)
-    #encode categorical data in data and test
+    data.dropna(inplace=True)
+    test.dropna(inplace=True)
+    # encode categorical data in data and test
     enc = preprocessing.OrdinalEncoder()
-    enc.fit(data.select_dtypes(include = object))
-    x_train = enc.transform(data.select_dtypes(include = object))
-    x_test  = enc.transform(test.select_dtypes(include = object))
-    #eight column is the target variable
-    y_train = x_train[:,8]
-    y_test  = x_test[:,8]
-    #concatenate encoded and scalar data
-    x_train = np.concatenate((x_train[:,:8], data.select_dtypes(include = int)), axis =1)
-    x_test  = np.concatenate((x_test[:,:8] , test.select_dtypes(include = int)), axis =1)
-
+    enc.fit(data.select_dtypes(include=object))
+    x_train = enc.transform(data.select_dtypes(include=object))
+    x_test = enc.transform(test.select_dtypes(include=object))
+    # eight column is the target variable
+    y_train = x_train[:, 8]
+    y_test = x_test[:, 8]
+    # concatenate encoded and scalar data
+    x_train = np.concatenate((x_train[:, :8], data.select_dtypes(include=int)), axis=1)
+    x_test = np.concatenate((x_test[:, :8], test.select_dtypes(include=int)), axis=1)
 
     return x_train, x_test, y_train, y_test
-
 
 
 # =======================================REGRESSION============================================ #
