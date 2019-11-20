@@ -8,6 +8,7 @@ import sklearn.model_selection
 import sklearn.neural_network
 import sklearn.naive_bayes
 import scipy.stats
+import timeout_decorator
 
 
 def decision_trees(x_train, y_train, max_depth=10, fold=4, iterations=20):
@@ -16,7 +17,7 @@ def decision_trees(x_train, y_train, max_depth=10, fold=4, iterations=20):
         "max_depth": range(1, max_depth + 1)
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(dtc, param_distributions=params, verbose=0, cv=fold,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(dtc, param_distributions=params, verbose= 0, cv=fold,
                                                                   random_state=0, n_iter=min(max_depth, iterations))
     print("Training decision tree classifier ...")
     random_search_cv.fit(x_train, y_train)
@@ -46,9 +47,9 @@ def SVC(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, i
         "gamma": scipy.stats.reciprocal(gamma_min, gamma_max),
         "kernel": kernels
     }
-
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=0, cv=fold,
-                                                                  random_state=0, n_iter=iterations)
+    #@timeout_decorator.timeout(460) #test
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=3, cv=fold,
+                                                                  random_state=0, n_iter=iterations, error_score = 0)
 
     print("Training SVC ...")
     random_search_cv.fit(x_train, y_train)
@@ -87,8 +88,8 @@ def logistic_regression(x_train, y_train, C_min, C_max, fold=4, iterations=20):
     return random_search_cv.best_estimator_, random_search_cv.best_params_
 
 
-def ada_boost_classifier(x_train, y_train, estimator, no_estimators, fold=4, iterations=20):
-    ada_boost = sklearn.ensemble.AdaBoostClassifier(random_state=0, base_estimator=estimator)
+def ada_boost_classifier(x_train, y_train, no_estimators, fold=4, iterations=20):
+    ada_boost = sklearn.ensemble.AdaBoostClassifier(random_state=0)
     params = {
         "n_estimators": range(1, no_estimators + 1),
         "algorithm": ['SAMME', 'SAMME.R']
@@ -112,7 +113,7 @@ def GaussianNB(x_train, y_train, fold=4, iterations=20):
     random_search_cv = sklearn.model_selection.RandomizedSearchCV(nb, param_distributions=params, verbose=0,
                                                                   cv=fold, random_state=0, n_iter=iterations)
 
-    print("Training Ada Boost ...")
+    print("Training GaussianNB ...")
     random_search_cv.fit(x_train, y_train)
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_

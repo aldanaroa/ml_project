@@ -7,6 +7,8 @@ import sklearn.preprocessing as preprocessing
 import data_util
 import re
 
+
+
 # ===================================CLASSIFICATION============================================ #
 
 def diabetic_retinopathy(test_size=0.2):
@@ -34,8 +36,6 @@ def cancer_type_num(char):
     if char == b'M':
         return 1
     return 0
-
-
 
 def adult():
     def clean_1(x) :
@@ -75,6 +75,12 @@ def adult():
 
 
     return x_train, x_test, y_train, y_test
+
+def plates(test_size=0.2):
+    data = np.loadtxt('data/classification/Plates/Faults.NNA', delimiter='\t')
+    x, y = data[:, :27], data[:, 27:]
+    _y, y_class = np.nonzero(y)
+    return data_util.normalize_split(x, y_class, test_size)
 
 
 
