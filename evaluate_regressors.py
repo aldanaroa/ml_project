@@ -11,8 +11,8 @@ def evaluate_regressor(x_train, x_test, y_train, y_test, model, params, dataset_
     train_accuracy = model.score(x_train, y_train)
     test_accuracy = model.score(x_test, y_test)
     print("--{0}:".format(model_name))
-    print("\tTraining accuracy: {1:.2f}%".format(dataset_name, train_accuracy * 100))
-    print("\tTesting accuracy: {1:.2f}%".format(dataset_name, test_accuracy * 100))
+    print("\tTraining accuracy: {0:.2f}%".format(dataset_name, train_accuracy * 100))
+    print("\tTesting accuracy: {0:.2f}%".format(dataset_name, test_accuracy * 100))
     if params is not None and len(params.keys()) > 0:
         print("\tHyperparam:")
         for hyperparam in params.keys():
