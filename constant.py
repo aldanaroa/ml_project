@@ -1,6 +1,7 @@
 # Creator: Hoang-Dung Do
 
 # Keys
+R2 = "r2"
 ACCURACY = "accuracy"
 PRECISION = "precision"
 RECALL = "recall"
