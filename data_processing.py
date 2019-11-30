@@ -79,6 +79,31 @@ def adult():
     return x_train, x_test, y_train, y_test
 
 
+def seismic_bumps(test_size=0.2):
+    data = np.loadtxt("data/classification/seismic-bumps.arff", delimiter=',', skiprows=155,
+                      converters={0: seismic_level, 1: seismic_level, 2: shift, 7: seismic_level})
+    x, y = data[:, :18], data[:, 18]
+
+    return data_util.normalize_split(x, y, test_size)
+
+
+def seismic_level(char):
+    if char == b'a':
+        return 0
+    if char == b'b':
+        return 1
+    if char == b'c':
+        return 2
+    if char == b'd':
+        return 3
+    return 0
+
+
+def shift(char):
+    if char == b'N':
+        return 1
+    return 0
+
 # =======================================REGRESSION============================================ #
 
 # def red_wine_quality(test_size=0.2):

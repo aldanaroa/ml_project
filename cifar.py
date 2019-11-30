@@ -138,7 +138,7 @@ class DropoutCNN(nn.Module):
         # self.dropout2d = nn.Dropout2d(0.25)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, padding=2)
-        self.fc1 = nn.Linear(16 * 8 * 8, 64)
+        self.fc1 = nn.Linear(16 * 8 * 8, 250)
         self.dropout = nn.Dropout(0.25)
         self.fc2 = nn.Linear(250, 64)
         self.fc3 = nn.Linear(64, 10)
@@ -172,10 +172,10 @@ label_test_tensor = torch.tensor(label_test)
 
 img_cv_train, img_cv, label_cv_train, label_cv = train_test_split(img_train_tensor, label_train_tensor)
 
-run(SimpleCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "simple_cnn.pth", "result/cifar_simple.json", 70)
+# run(SimpleCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "simple_cnn.pth", "result/cifar_simple.json", 70)
 run(DropoutCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_cnn.pth", "result/cifar_dropout.json", 100)
 
-# with open("result/cifar_dropout.json", 'r') as f:
+# with open("result/cifar_simple.json", 'r') as f:
 #     data = json.load(f)
 #     plt.plot(data["train"], label="train")
 #     plt.plot(data["cv"], label="cv")
