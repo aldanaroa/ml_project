@@ -114,9 +114,9 @@ def run(cnn, x_train, x_cv, y_train, y_cv, model_file, result_file, max_epoch):
 class SimpleCNN(nn.Module):
     def __init__(self):
         super(SimpleCNN, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5, padding=2)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=5, padding=2)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, padding=2)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=5, padding=2)
         self.fc1 = nn.Linear(16 * 8 * 8, 250)
         self.fc2 = nn.Linear(250, 64)
         self.fc3 = nn.Linear(64, 10)
@@ -134,10 +134,42 @@ class SimpleCNN(nn.Module):
 class DropoutCNN(nn.Module):
     def __init__(self):
         super(DropoutCNN, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=5, padding=2)
+        # self.dropout2d = nn.Dropout2d(0.25)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=5, padding=2)
+        self.fc1 = nn.Linear(16 * 8 * 8, 250)
+        self.dropout = nn.Dropout(0.25)
+        self.fc2 = nn.Linear(250, 64)
+        self.fc3 = nn.Linear(64, 10)
+
+    def forward(self, x):
+        # x = self.dropout2d(self.conv1(x))
+        x = self.pool(func.relu(self.conv1(x)))
+
+        # x = self.dropout2d(self.conv2(x))
+        x = self.pool(func.relu(self.conv2(x)))
+
+        x = x.view(-1, 16 * 8 * 8)
+
+        x = self.dropout(self.fc1(x))
+        x = func.relu(x)
+
+        x = self.dropout(self.fc2(x))
+        x = func.relu(x)
+
+        x = self.fc3(x)
+        return x
+
+
+class ComplexCNN(nn.Module):
+    def __init__(self):
+        super(ComplexCNN, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5, padding=2)
         # self.dropout2d = nn.Dropout2d(0.25)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, padding=2)
+        self.conv3 = nn.Conv2d(in_channels=16, out_channels=16, kernel_size=5, padding=2)
         self.fc1 = nn.Linear(16 * 8 * 8, 250)
         self.dropout = nn.Dropout(0.25)
         self.fc2 = nn.Linear(250, 64)
@@ -172,7 +204,7 @@ label_test_tensor = torch.tensor(label_test)
 
 img_cv_train, img_cv, label_cv_train, label_cv = train_test_split(img_train_tensor, label_train_tensor)
 
-# run(SimpleCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "simple_cnn.pth", "result/cifar_simple.json", 70)
+run(SimpleCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "simple_cnn.pth", "result/cifar_simple.json", 50)
 run(DropoutCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_cnn.pth", "result/cifar_dropout.json", 100)
 
 # with open("result/cifar_simple.json", 'r') as f:
@@ -184,6 +216,12 @@ run(DropoutCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_cnn.p
 
 # simple_cnn = SimpleCNN()
 # simple_cnn.load_state_dict(torch.load("simple_cnn.pth"))
+# kernels = simple_cnn.conv1.weight.detach()
+# fig, axarr = plt.subplots(1, kernels.size(0))
+# for idx in range(kernels.size(0)):
+#     img = kernels[idx].detach().numpy().transpose(1, 2, 0) + 0.5
+#     axarr[idx].imshow(img)
+# plt.show()
 # _, label_pred = torch.max(simple_cnn(img_test_tensor.float()), 1)
 # simple_accuracy = sklearn.metrics.accuracy_score(label_test, label_pred)
 # print("\tSimple cnn accuracy: {0:.2f}%".format(simple_accuracy * 100))

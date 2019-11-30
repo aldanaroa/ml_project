@@ -18,7 +18,7 @@ def diabetic_retinopathy(test_size=0.2):
 
 def credit_card_client(test_size=0.2):
     data = np.loadtxt("data/classification/default_credit_card_clients.csv", delimiter=',', skiprows=2)
-    x, y = data[:, 1:24], data[:, 24]
+    x, y = data[:, 1:24].astype(int), data[:, 24].astype(int)
     return data_util.normalize_split(x, y, test_size)
 
 
@@ -82,7 +82,7 @@ def adult():
 def seismic_bumps(test_size=0.2):
     data = np.loadtxt("data/classification/seismic-bumps.arff", delimiter=',', skiprows=155,
                       converters={0: seismic_level, 1: seismic_level, 2: shift, 7: seismic_level})
-    x, y = data[:, :18], data[:, 18]
+    x, y = data[:, :18].astype(int), data[:, 18].astype(int)
 
     return data_util.normalize_split(x, y, test_size)
 
@@ -103,6 +103,13 @@ def shift(char):
     if char == b'N':
         return 1
     return 0
+
+
+def statlog_german(test_size=0.2):
+    data = np.loadtxt("data/classification/german.data-numeric", skiprows=0)
+    x, y = data[:, :24].astype(int), data[:, 24].astype(int)
+
+    return data_util.normalize_split(x, y, test_size)
 
 # =======================================REGRESSION============================================ #
 

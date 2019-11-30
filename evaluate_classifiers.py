@@ -148,9 +148,16 @@ def default_credit_card():
 
     export_result(result, "default_credit_card.json")
 
+
 def breast_cancer():
     print("Started training classifiers on breast cancer data set.")
     x_train, x_test, y_train, y_test = data_processing.breast_cancer()
+
+    # LR
+    lr_best_model, lr_params = classification_cv.logistic_regression(x_train, y_train, C_min=0.01, C_max=10, fold=3,
+                                                                     iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "Breast cancer",
+                        "Logistic Regression")
 
     # DECISION TREE
     dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
@@ -234,4 +241,51 @@ def adult():
                         "Adult", "MLP")
 
 
-default_credit_card()
+def seismic_bumps():
+    print("Started training classifiers on seismic bumps data set.")
+    x_train, x_test, y_train, y_test = data_processing.seismic_bumps()
+
+    # LR
+    lr_best_model, lr_params = classification_cv.logistic_regression(x_train, y_train, C_min=0.01, C_max=10, fold=3,
+                                                                     iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "Seismic bumps",
+                        "Logistic Regression")
+
+    # DECISION TREE
+    dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Seismic bumps",
+                        "DECISION TREE")
+
+    # RANDOM FOREST
+    rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=20, fold=4,
+                                                               iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params,
+                        "Seismic bumps", "RANDOM FOREST")
+
+    # SVC
+    svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
+                                                       ['linear', 'poly', 'rbf', 'sigmoid'],
+                                                       0.01, 100, 1, 1000, fold=4,
+                                                       iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Seismic bumps", "SVC")
+
+    # KNN
+    knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Seismic bumps", "KNN")
+
+    # GaussianNB
+    nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Seismic bumps",
+                        "Gaussian NB")
+
+    # MLP
+    mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
+                                                                 hidden_layer_sizes=[(), (10,)],
+                                                                 alphas=[0.01, 0.05, 0.5, 1],
+                                                                 max_iter=[10, 20, 50, 100],
+                                                                 fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
+                        "Seismic bumps", "MLP")
+
+
+seismic_bumps()
