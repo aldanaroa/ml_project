@@ -36,20 +36,18 @@ def evaluate_regressor(x_train, x_test, y_train, y_test, model, params, dataset_
 
 def red_wine_quality():
     print("Started training linear regressor on red wine quality data set.")
-    x_train, x_test, y_train, y_test = data_processing.red_wine_quality()
-    result = {}
+    # x_train, x_test, y_train, y_test = data_processing.red_wine_quality()
+    # result = {}
+    #
+    # # LR
+    # lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
+    # result[constant.LR] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                          "Wine quality", "Linear Regression")
+    #
+    # # decision tree
+    # lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=20)
+    # result[constant.DECISION_TREE] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                                     "Wine quality", "Decision tree")
+    #
+    # export_result(result, "result/red_wine.json")
 
-    # LR
-    lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
-    result[constant.LR] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                             "Wine quality", "Linear Regression")
-
-    # decision tree
-    lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=20)
-    result[constant.DECISION_TREE] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                                        "Wine quality", "Decision tree")
-
-    export_result(result, "result/red_wine.json")
-
-
-red_wine_quality()
