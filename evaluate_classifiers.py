@@ -99,7 +99,7 @@ def diabete_retinopathy():
     result[constant.NN] = evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
                                               "Diabete retinopathy", "MLP")
 
-    export_result(result, "result/diabetic_retinopathy.json")
+    export_result(result, "result/classification/diabetic_retinopathy.json")
 
 
 def default_credit_card():
@@ -158,7 +158,7 @@ def default_credit_card():
     result[constant.NN] = evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
                                               "Breast cancer", "MLP")
 
-    export_result(result, "default_credit_card.json")
+    export_result(result, "result/classification/default_credit_card.json")
 
 
 def breast_cancer():
@@ -219,7 +219,7 @@ def breast_cancer():
     result[constant.NN] = evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
                                               "Breast cancer", "MLP")
 
-    export_result(result, "breast_cancer.json")
+    export_result(result, "result/classification/breast_cancer.json")
 
 
 def adult():
@@ -280,7 +280,7 @@ def adult():
     result[constant.NN] = evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
                                               "Adult", "MLP")
 
-    export_result(result, "adult.json")
+    export_result(result, "result/classification/adult.json")
 
 
 def seismic_bumps():
@@ -341,7 +341,7 @@ def seismic_bumps():
     result[constant.NN] = evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
                                               "Seismic bumps", "MLP")
 
-    export_result(result, "seismic_bumps.json")
+    export_result(result, "result/classification/seismic_bumps.json")
 
 
 def statlog_german():
@@ -399,7 +399,7 @@ def statlog_german():
     result[constant.NN] = evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
                                               "Statlog German", "MLP")
 
-    export_result(result, "statlog_german.json")
+    export_result(result, "result/classification/statlog_german.json")
 
 
 statlog_german()

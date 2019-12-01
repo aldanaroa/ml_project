@@ -66,11 +66,10 @@ def SVR(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, i
     return random_search_cv.best_estimator_, random_search_cv.best_params_
 
 
-def ada_boost_regression(x_train, y_train, estimators, no_estimators, fold=4, iterations=20):
+def ada_boost_regression(x_train, y_train, no_estimators, fold=4, iterations=20):
     ada_boost = sklearn.ensemble.AdaBoostRegressor(random_state=0)
     params = {
-        "base_estimator": estimators,
-        "n_estimators": range(1, no_estimators + 1)
+        "n_estimators": range(1, max(no_estimators, 1) + 1)
     }
 
     random_search_cv = sklearn.model_selection.RandomizedSearchCV(ada_boost, param_distributions=params, verbose=0,

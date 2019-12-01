@@ -162,26 +162,26 @@ def show_conv1_layer(model):
     plt.show()
 
 
-img_train, img_test, label_train, label_test = load_data()
-
-img_train_tensor = torch.tensor(img_train, dtype=torch.double).reshape((-1, 3, 32, 32))
-label_train_tensor = torch.tensor(label_train)
-
-img_test_tensor = torch.tensor(img_test, dtype=torch.double).reshape((-1, 3, 32, 32))
-label_test_tensor = torch.tensor(label_test)
-
-img_cv_train, img_cv, label_cv_train, label_cv = train_test_split(img_train_tensor, label_train_tensor)
+# img_train, img_test, label_train, label_test = load_data()
+#
+# img_train_tensor = torch.tensor(img_train, dtype=torch.double).reshape((-1, 3, 32, 32))
+# label_train_tensor = torch.tensor(label_train)
+#
+# img_test_tensor = torch.tensor(img_test, dtype=torch.double).reshape((-1, 3, 32, 32))
+# label_test_tensor = torch.tensor(label_test)
+#
+# img_cv_train, img_cv, label_cv_train, label_cv = train_test_split(img_train_tensor, label_train_tensor)
 
 # run(SimpleCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "simple_cnn.pth", "result/cifar_simple.json", 20)
-run(CNN3L(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_cnn.pth", "result/cifar_dropout.json", 200)
+# run(CNN3L(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_cnn.pth", "result/cifar_dropout.json", 100)
 
 
-# with open("result/cifar_dropout.json", 'r') as f:
-#     data = json.load(f)
-#     plt.plot(data["train"], label="train")
-#     plt.plot(data["cv"], label="cv")
-#     plt.legend()
-#     plt.show()
+with open("result/cifar_dropout.json", 'r') as f:
+    data = json.load(f)
+    plt.plot(data["train"], label="train")
+    plt.plot(data["cv"], label="cv")
+    plt.legend()
+    plt.show()
 #
 # simple_cnn = SimpleCNN()
 # simple_cnn.load_state_dict(torch.load("dropout_2L_cnn.pth"))

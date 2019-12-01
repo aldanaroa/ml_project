@@ -111,17 +111,44 @@ def statlog_german(test_size=0.2):
 
     return data_util.normalize_split(x, y, test_size)
 
+
 # =======================================REGRESSION============================================ #
 
-# def red_wine_quality(test_size=0.2):
-#     data = np.loadtxt("data/regression/wine_quality/winequality-red.csv", delimiter=';', skiprows=1)
-#     x, y = data[:, :11], data[:, 11]
-#     x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, random_state=0,
-#                                                                                 test_size=test_size)
-#
-#     scaler = sklearn.preprocessing.StandardScaler()
-#
-#     x_train = scaler.fit_transform(x_train)
-#     x_test = scaler.transform(x_test)
-#
-#     return x_train, x_test, y_train, y_test
+def red_wine_quality(test_size=0.2):
+    data = np.loadtxt("data/regression/wine_quality/winequality-red.csv", delimiter=';', skiprows=1)
+    x, y = data[:, :11], data[:, 11]
+
+    return data_util.normalize_split(x, y, test_size)
+
+
+def community_crime(test_size=0.2):
+    used_cols = set(range(0, 128)) - set(range(0, 5)) - set(range(101, 118)) - set(range(121, 127))
+    data = np.loadtxt("data/regression/communities.data", delimiter=',', usecols=used_cols)
+    x, y = data[:, :99], data[:, 99]
+
+    return data_util.normalize_split(x, y, test_size)
+
+
+def QSAR(test_size=0.2):
+    data = np.loadtxt("data/regression/qsar_aquatic_toxicity.csv", delimiter=';')
+    x, y = data[:, :9], data[:, 9]
+
+    return data_util.normalize_split(x, y, test_size)
+
+
+def facebook_metric(test_size=0.2):
+    data = np.loadtxt("data/regression/facebook_metrics/dataset_Facebook.csv", delimiter=';', skiprows=1,
+                      converters={1: post_type})
+    x, y = data[:, :18], data[:, 18]
+
+    return data_util.normalize_split(x, y, test_size)
+
+
+def post_type(type):
+    if type == b"Photo":
+        return 0
+    if type == b"Status":
+        return 1
+    if type == b"Link":
+        return 2
+    return 3
