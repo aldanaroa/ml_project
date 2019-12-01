@@ -288,4 +288,48 @@ def seismic_bumps():
                         "Seismic bumps", "MLP")
 
 
-seismic_bumps()
+def statlog_german():
+    print("Started training classifiers on statlog german data set.")
+    x_train, x_test, y_train, y_test = data_processing.statlog_german()
+
+    # LR
+    lr_best_model, lr_params = classification_cv.logistic_regression(x_train, y_train, C_min=0.01, C_max=10, fold=3,
+                                                                     iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "Statlog german",
+                        "Logistic Regression")
+
+    # DECISION TREE
+    dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Statlog german",
+                        "DECISION TREE")
+
+    # RANDOM FOREST
+    rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=20, fold=4,
+                                                               iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params,
+                        "Statlog german", "RANDOM FOREST")
+
+    # SVC
+    svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
+                                                       ['linear', 'poly', 'rbf', 'sigmoid'],
+                                                       0.01, 100, 1, 1000, fold=4,
+                                                       iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Statlog german", "SVC")
+
+    # KNN
+    knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Statlog german", "KNN")
+
+    # GaussianNB
+    nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Statlog german",
+                        "Gaussian NB")
+
+    # MLP
+    mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
+                                                                 hidden_layer_sizes=[(), (10,)],
+                                                                 alphas=[0.01, 0.05, 0.5, 1],
+                                                                 max_iter=[10, 20, 50, 100],
+                                                                 fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
+                        "Statlog german", "MLP")
