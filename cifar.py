@@ -62,7 +62,7 @@ def epoch_search(cnn, x_train, x_cv, y_train, y_cv, epoch_min=1, epoch_max=100):
 
     batch_size = 1000
     loss_func = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(cnn.parameters(), lr=0.01, momentum=0.9)
+    optimizer = torch.optim.SGD(cnn.parameters(), lr=0.02, momentum=0.9)
 
     for epoch in range(epoch_min, epoch_max + 1):
         running_loss = 0.0
@@ -131,65 +131,24 @@ class SimpleCNN(nn.Module):
         return x
 
 
-class Dropout2LCNN(nn.Module):
+class CNN3L(nn.Module):
     def __init__(self):
-        super(Dropout2LCNN, self).__init__()
+        super(CNN3L, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=5, padding=2)
-        # self.dropout2d = nn.Dropout2d(0.25)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=5, padding=2)
-        # self.dropout = nn.Dropout(0.25)
-        self.fc1 = nn.Linear(16 * 8 * 8, 250)
-        self.fc2 = nn.Linear(250, 50)
-        self.fc3 = nn.Linear(50, 10)
-
-    def forward(self, x):
-        # x = self.dropout2d(self.conv1(x))
-        x = self.pool(func.relu(self.conv1(x)))
-
-        # x = self.dropout2d(self.conv2(x))
-        x = self.pool(func.relu(self.conv2(x)))
-
-        x = x.view(-1, 16 * 8 * 8)
-
-        # x = self.dropout(self.fc1(x))
-        x = func.relu(self.fc1(x))
-
-        # x = self.dropout(self.fc2(x))
-        x = func.relu(self.fc2(x))
-
-        x = self.fc3(x)
-        return x
-
-
-class Dropout3LCNN(nn.Module):
-    def __init__(self):
-        super(Dropout3LCNN, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=5, padding=2)
-        # self.dropout2d = nn.Dropout2d(0.25)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=5, padding=2)
         self.conv3 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1)
-        self.fc1 = nn.Linear(32 * 4 * 4, 100)
-        self.dropout = nn.Dropout(0.25)
-        self.fc2 = nn.Linear(100, 50)
-        self.fc3 = nn.Linear(50, 10)
+        self.fc1 = nn.Linear(32 * 4 * 4, 500)
+        self.fc2 = nn.Linear(500, 100)
+        self.fc3 = nn.Linear(100, 10)
 
     def forward(self, x):
-        # (3,32,32) -> (8,16,16)
         x = self.pool(func.relu(self.conv1(x)))
-        # (8,16,16) -> (16,8,8)
         x = self.pool(func.relu(self.conv2(x)))
-        # (16,8,8) -> (32,4,4)
         x = self.pool(func.relu(self.conv3(x)))
         x = x.view(-1, 32 * 4 * 4)
-
-        x = self.dropout(self.fc1(x))
-        x = func.relu(x)
-
-        x = self.dropout(self.fc2(x))
-        x = func.relu(x)
-
+        x = func.relu(self.fc1(x))
+        x = func.relu(self.fc2(x))
         x = self.fc3(x)
         return x
 
@@ -213,26 +172,27 @@ label_test_tensor = torch.tensor(label_test)
 
 img_cv_train, img_cv, label_cv_train, label_cv = train_test_split(img_train_tensor, label_train_tensor)
 
-# run(SimpleCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "simple_cnn.pth", "result/cifar_simple.json", 3)
-run(Dropout2LCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_2L_cnn.pth", "result/cifar_2L.json", 20)
-run(Dropout3LCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_3L_cnn.pth", "result/cifar_dropout_3L.json", 50)
+# run(SimpleCNN(), img_cv_train, img_cv, label_cv_train, label_cv, "simple_cnn.pth", "result/cifar_simple.json", 20)
+run(CNN3L(), img_cv_train, img_cv, label_cv_train, label_cv, "dropout_cnn.pth", "result/cifar_dropout.json", 200)
 
 
-# with open("result/cifar_2L.json", 'r') as f:
+# with open("result/cifar_dropout.json", 'r') as f:
 #     data = json.load(f)
 #     plt.plot(data["train"], label="train")
 #     plt.plot(data["cv"], label="cv")
 #     plt.legend()
 #     plt.show()
-
+#
 # simple_cnn = SimpleCNN()
-# simple_cnn.load_state_dict(torch.load("simple_cnn.pth"))
+# simple_cnn.load_state_dict(torch.load("dropout_2L_cnn.pth"))
 # _, label_pred = torch.max(simple_cnn(img_test_tensor.float()), 1)
 # simple_accuracy = sklearn.metrics.accuracy_score(label_test, label_pred)
 # print("\tSimple cnn accuracy: {0:.2f}%".format(simple_accuracy * 100))
 
-# dropout_cnn = Dropout2LCNN()
+# dropout_cnn = DropoutCNN()
 # dropout_cnn.load_state_dict(torch.load("dropout_cnn.pth"))
 # _, label_pred = torch.max(dropout_cnn(img_test_tensor.float()), 1)
 # dropout_accuracy = sklearn.metrics.accuracy_score(label_test, label_pred)
 # print("\tDropout cnn accuracy: {0:.2f}%".format(dropout_accuracy * 100))
+
+# show_conv1_layer(simple_cnn)
