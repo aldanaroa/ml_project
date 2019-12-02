@@ -126,5 +126,5 @@ def QSAR():
     export_result(result, "result/regression/qsar.json")
 
 
-QSAR()
+QSAR() 
 
