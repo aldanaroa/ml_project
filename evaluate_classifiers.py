@@ -182,11 +182,11 @@ def adult():
                         "Adult", "RANDOM FOREST")
 
     # SVC
-    #svc_best_model, svc_params = classification_cv.SVC(x_train, y_train, ['linear', 'rbf'],
-    #                                                   ['linear', 'poly', 'rbf', 'sigmoid'],
-    #                                                  0.01, 100, 1, 1000, fold=2,
-    #                                                   iterations=3)
-    #evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Adult", "SVC")
+    svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
+                                                       ['linear', 'poly', 'rbf', 'sigmoid'],
+                                                      0.01, 100, 1, 1000, fold=2,
+                                                       iterations=3)
+    evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Adult", "SVC")
 
     # KNN
     knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
@@ -207,54 +207,165 @@ def adult():
                         "Adult", "MLP")
 
 def plates():
-    print("Started training classifiers on plates data set.")
+    #print("Started training classifiers on plates data set.")
     x_train, x_test, y_train, y_test = data_processing.plates()
+
+    # LR
+    #lr_best_model, lr_params = classification_cv.logistic_regression(x_train, y_train, C_min=0.01, C_max=10, fold=3,
+    #                                                                 iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "Plates",
+    #                    "Logistic Regression")
+
+    # DECISION TREE
+    #dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Plates",
+    #                    "DECISION TREE")
+
+    # RANDOM FOREST
+    #rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=20, fold=4,
+    #                                                           iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params,
+    #                    "Plates", "RANDOM FOREST")
+
+    # SVC
+    #svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
+    #                                                   ['linear','poly', 'rbf', 'sigmoid'],
+    #                                                   0.01, 100, 1, 1000, fold=2,
+    #                                                   iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Plates", "SVC")
+
+    # KNN
+    #knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Plates", "KNN")
+
+    # GaussianNB
+    #nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Plates",
+    #                    "Gaussian NB")
+
+    #Ada boost classifier
+    #AB_best_model, AB_params = classification_cv.ada_boost_classifier(x_train, y_train, no_estimators=100,fold = 4,
+    #                                                                    iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, AB_best_model, AB_params,
+    #                    "Plates", "ADA BOOST")
+
+
+    # MLP
+    mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
+                                                                 hidden_layer_sizes=[(7,), (100,7,)],
+                                                                 alphas=[0.01, 0.05, 0.5, 1],
+                                                                 max_iter=[100],
+                                                                 fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
+                        "Plates", "MLP")
+
+
+
+
+
+def yeast():
+    #print("Started training classifiers on plates data set.")
+    x_train, x_test, y_train, y_test = data_processing.yeast()
 
     # LR
     lr_best_model, lr_params = classification_cv.logistic_regression(x_train, y_train, C_min=0.01, C_max=10, fold=3,
                                                                      iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "Plates",
+    evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "Yeast",
                         "Logistic Regression")
 
     # DECISION TREE
     dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Plates",
+    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "Yeast",
                         "DECISION TREE")
 
     # RANDOM FOREST
     rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=20, fold=4,
                                                                iterations=20)
     evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params,
-                        "Plates", "RANDOM FOREST")
+                        "Yeast", "RANDOM FOREST")
 
     # SVC
-    svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
-                                                       ['linear','poly', 'rbf', 'sigmoid'],
-                                                       0.01, 100, 1, 1000, fold=2,
-                                                       iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Plates", "SVC")
+    #svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
+    #                                                   ['linear','poly', 'rbf', 'sigmoid'],
+    #                                                   0.01, 100, 1, 1000, fold=2,
+    #                                                   iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "Yeast", "SVC")
 
     # KNN
     knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Plates", "KNN")
+    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "Yeast", "KNN")
 
     # GaussianNB
     nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
-    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Plates",
+    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "Yeast",
                         "Gaussian NB")
 
     #Ada boost classifier
     AB_best_model, AB_params = classification_cv.ada_boost_classifier(x_train, y_train, no_estimators=100,fold = 4,
                                                                         iterations=20)
     evaluate_classifier(x_train, x_test, y_train, y_test, AB_best_model, AB_params,
-                        "Plates", "ADA BOOST")
+                        "Yeast", "ADA BOOST")
 
 
     # MLP
     mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
-                                                                 hidden_layer_sizes=[(), (7,), (14,7,)],
+                                                                 hidden_layer_sizes=[(10,), (100,10,)],
                                                                  alphas=[0.01, 0.05, 0.5, 1],
-                                                                 max_iter=[10, 20, 50, 100],
+                                                                 max_iter=[100],
                                                                  fold=4, iterations=20)
     evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
-                        "Plates", "MLP")
+                        "Yeast", "MLP")
+
+
+def torax():
+    #print("Started training classifiers on torax data set.")
+    x_train, x_test, y_train, y_test = data_processing.torax()
+
+    # LR
+    lr_best_model, lr_params = classification_cv.logistic_regression(x_train, y_train, C_min=0.01, C_max=10, fold=3,
+                                                                     iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, lr_best_model, lr_params, "torax",
+                        "Logistic Regression")
+
+    # DECISION TREE
+    dt_best_model, dt_params = classification_cv.decision_trees(x_train, y_train, max_depth=10, fold=3, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, dt_best_model, dt_params, "torax",
+                        "DECISION TREE")
+
+    # RANDOM FOREST
+    rf_best_model, rf_params = classification_cv.random_forest(x_train, y_train, max_estimator=20, fold=4,
+                                                               iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, rf_best_model, rf_params,
+                        "torax", "RANDOM FOREST")
+
+    # SVC
+    #svc_best_model, svc_params = classification_cv.SVC(x_train, y_train,
+    #                                                   ['linear','poly', 'rbf', 'sigmoid'],
+    #                                                   0.01, 100, 1, 1000, fold=2,
+    #                                                   iterations=20)
+    #evaluate_classifier(x_train, x_test, y_train, y_test, svc_best_model, svc_params, "torax", "SVC")
+
+    # KNN
+    knn_best_model, knn_params = classification_cv.KNC(x_train, y_train, neighbors=10, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, knn_best_model, knn_params, "torax", "KNN")
+
+    # GaussianNB
+    nb_best_model, nb_params = classification_cv.GaussianNB(x_train, y_train, fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, nb_best_model, nb_params, "torax",
+                        "Gaussian NB")
+
+    #Ada boost classifier
+    AB_best_model, AB_params = classification_cv.ada_boost_classifier(x_train, y_train, no_estimators=100,fold = 4,
+                                                                        iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, AB_best_model, AB_params,
+                        "torax", "ADA BOOST")
+
+
+    # MLP
+    mlp_best_model, mlp_params = classification_cv.MLPClassifier(x_train, y_train,
+                                                                 hidden_layer_sizes=[(10,), (100,10,)],
+                                                                 alphas=[0.01, 0.05, 0.5, 1],
+                                                                 max_iter=[100],
+                                                                 fold=4, iterations=20)
+    evaluate_classifier(x_train, x_test, y_train, y_test, mlp_best_model, mlp_params,
+                        "torax", "MLP")
