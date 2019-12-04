@@ -1,0 +1,16 @@
+model 1: CNN 4 conv layer
+    -   epoch: 23
+    -   accuracy: 71.00%
+    -   there is a sign of overfitting
+    -> reduce number of layers and hidden units
+
+model 2: CNN 3 conv layer
+    -   epoch: 22
+    -   accuracy: 74.61%
+    -   still overfitting though we reduced number of hidden layers
+
+model 2: regularized CNN 3 layer
+    -   L2, weight decay = 0.001
+    -   epoch: 100
+    -   accuracy: 78.91%
+
