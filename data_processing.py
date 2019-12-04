@@ -36,10 +36,8 @@ def cancer_type_num(char):
         return 1
     return 0
 
-
 def clean_1(x):
     return x.strip()
-
 
 def adult():
     names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status', 'occupation', 'relationship',
@@ -78,6 +76,51 @@ def adult():
 
     return x_train, x_test, y_train, y_test
 
+def plates(test_size=0.2):
+    data = np.loadtxt('data/classification/Plates/Faults.NNA', delimiter='\t')
+    x, y = data[:, :27], data[:, 27:]
+    _y, y_class = np.nonzero(y) #simple coding of target data
+    return data_util.normalize_split(x, y_class, test_size)
+
+
+def yeast(test_size=0.2):
+
+    data = pd.read_csv('data/classification/yeast/yeast.data', delimiter = '\s+', names = range(10))
+    #encode target classes as numbers
+    enc = preprocessing.OrdinalEncoder()
+    enc.fit(data.select_dtypes(include = object))
+
+    x = data.iloc[:,1:9]
+    y = enc.transform(data.select_dtypes(include = object))
+
+    return data_util.normalize_split(x, y[:,1], test_size)
+
+
+def torax(test_size=0.2):
+
+    data = pd.read_csv('data/classification/torax/ThoraricSurgery.arff', names = range(17),skiprows=21)
+    x_train, x_test, y_train, y_test= sklearn.model_selection.train_test_split(data.iloc[:,:16], data.iloc[:,16], random_state =0, test_size= 0.2)
+
+    enc = preprocessing.OrdinalEncoder()
+    enc.fit(x_train.select_dtypes(include = object))
+
+    en_train = enc.transform(x_train.select_dtypes(include = object))
+    en_test  = enc.transform(x_test.select_dtypes(include = object))
+
+    #change (F,T) to (0,1) for target variable
+    enc = preprocessing.OrdinalEncoder()
+    enc.fit(np.array(y_train).reshape(-1,1))
+
+    y_train = enc.transform(np.array(y_train).reshape(-1,1))
+    y_test  = enc.transform(np.array(y_test).reshape(-1,1))
+
+    y_train = y_train.reshape(-1,)
+    y_test = y_test.reshape(-1,)
+
+    x_train = np.concatenate((en_train,  x_train.select_dtypes(include = [int, float])), axis =1)
+    x_test  = np.concatenate((en_test,   x_test.select_dtypes(include = [int, float])), axis =1)
+
+    return x_train, x_test, y_train, y_test
 
 def seismic_bumps(test_size=0.2):
     data = np.loadtxt("data/classification/seismic-bumps.arff", delimiter=',', skiprows=155,
@@ -120,6 +163,55 @@ def red_wine_quality(test_size=0.2):
 
     return data_util.normalize_split(x, y, test_size)
 
+def community_crime(test_size=0.2):
+    used_cols = set(range(0, 128)) - set(range(0, 5)) - set(range(101, 118)) - set(range(121, 127))
+    data = np.loadtxt("data/regression/communities.data", delimiter=',', usecols=used_cols)
+    x, y = data[:, :99], data[:, 99]
+
+    return data_util.normalize_split(x, y, test_size)
+
+def bike(test_size=0.2):
+    data = pd.read_csv('data/regression/bike/hour.csv')
+    #instant column is not needed because is a serial number
+    x_train, x_test, y_train, y_test= sklearn.model_selection.train_test_split(data.iloc[:,1:16], data.iloc[:,16], random_state =0, test_size= test_size)
+
+    enc = preprocessing.OrdinalEncoder()
+    enc.fit(x_train.select_dtypes(include = object))
+
+    en_train = enc.transform(x_train.select_dtypes(include = object))
+    en_test  = enc.transform(x_test.select_dtypes(include = object))
+
+    x_train = np.concatenate((en_train, x_train.select_dtypes(include = [int, float])), axis =1)
+    x_test = np.concatenate((en_test,   x_test.select_dtypes(include = [int, float])), axis =1)
+
+    return x_train, x_test, y_train, y_test
+
+
+
+def student(test_size=0.2):
+    data = pd.read_csv('data/regression/student/student-por.csv', delimiter = ';')
+
+    x_train, x_test, y_train, y_test= sklearn.model_selection.train_test_split(data.iloc[:,:30], data.iloc[:,32], random_state =0, test_size= test_size)
+
+    enc = preprocessing.OrdinalEncoder()
+    enc.fit(x_train.select_dtypes(include = object))
+
+    en_train = enc.transform(x_train.select_dtypes(include = object))
+    en_test  = enc.transform(x_test.select_dtypes(include = object))
+
+    x_train = np.concatenate((en_train, x_train.select_dtypes(include = [int, float])), axis =1)
+    x_test  = np.concatenate((en_test,   x_test.select_dtypes(include = [int, float])), axis =1)
+
+    return x_train, x_test, y_train, y_test
+
+
+def concrete(test_size=0.2):
+
+    data = pd.read_excel('data/regression/concrete/Concrete_Data.xls')
+    x, y = data.iloc[:,:8], data.iloc[:,8]
+
+    return data_util.normalize_split(x, y, test_size)
+
 
 def community_crime(test_size=0.2):
     used_cols = set(range(0, 128)) - set(range(0, 5)) - set(range(101, 118)) - set(range(121, 127))
@@ -128,13 +220,56 @@ def community_crime(test_size=0.2):
 
     return data_util.normalize_split(x, y, test_size)
 
+def gpu(test_size=0.2):
 
+    data = pd.read_csv('data/regression/gpu/sgemm_product.csv')
+    #from the 4 runs, use the average as target
+    data['average']=data.iloc[:,14:18].median(axis=1)
+    #take logarithm as suggested in data set readme
+    data.average = data.average.apply(np.log10)
+
+    x, y = data.iloc[:,:14], data.iloc[:,18]
+    
+    return data_util.normalize_split(x, y, test_size)
+
+  
 def QSAR(test_size=0.2):
     data = np.loadtxt("data/regression/qsar_aquatic_toxicity.csv", delimiter=';')
     x, y = data[:, :9], data[:, 9]
 
     return data_util.normalize_split(x, y, test_size)
 
+
+######################################################################################
+
+def molecular(test_size=0.2):
+
+    file = 'data/regression/molecular/ACT4_competition_training.csv'
+    with open(file) as f:
+        cols = f.readline().rstrip('\n').split(',')
+
+    X = np.loadtxt(file, delimiter=',', usecols=range(2, len(cols)), skiprows=1, dtype=np.uint8)
+    y = np.loadtxt(file, delimiter=',', usecols=[1], skiprows=1)
+    np.savez('act4.npz', X, y)
+
+    file = 'data/regression/molecular/ACT2_competition_training.csv'
+    with open(file) as f:
+        cols = f.readline().rstrip('\n').split(',')
+
+    X = np.loadtxt(file, delimiter=',', usecols=range(2, len(cols)), skiprows=1, dtype=np.uint8)
+    y = np.loadtxt(file, delimiter=',', usecols=[1], skiprows=1)
+    np.savez('act2.npz', X, y)
+
+    ac4= np.load('act4.npz')
+    ac2= np.load('act2.npz')
+
+    x4, y4 = ac4['arr_0'], ac4['arr_1']
+    x2, y2 = ac2['arr_0'], ac2['arr_1']
+
+    x4_train, x4_test, y4_train, y4_test = data_util.normalize_split(x4, y4, test_size)
+    x2_train, x2_test, y2_train, y2_test = data_util.normalize_split(x2, y2, test_size)
+
+    return x4_train, x4_test, y4_train, y4_test, x2_train, x2_test, y2_train, y2_test
 
 def facebook_metric(test_size=0.2):
     data = np.loadtxt("data/regression/facebook_metrics/dataset_Facebook.csv", delimiter=';', skiprows=1,

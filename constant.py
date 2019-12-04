@@ -2,6 +2,7 @@
 
 # Keys
 R2 = "r2"
+PEARSON = "pearson"
 ACCURACY = "accuracy"
 PRECISION = "precision"
 RECALL = "recall"
