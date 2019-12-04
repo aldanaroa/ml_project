@@ -101,7 +101,8 @@ def red_wine_quality():
 
 def QSAR():
     print("Started training linear regressor on QSAR aquatic toxicity data set.")
-    x_train, x_test, y_train, y_test = data_processing.qsar()
+
+    x_train, x_test, y_train, y_test = data_processing.QSAR()
     result = {}
 
     # LR
@@ -143,9 +144,6 @@ def QSAR():
                                              "QSAR", "NeuralNet")
 
     export_result(result, "result/regression/qsar.json")
-
-
-#QSAR()
 
 def bike():
     print("Started training linear regressor on bike data set.")

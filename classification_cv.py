@@ -88,10 +88,10 @@ def logistic_regression(x_train, y_train, C_min, C_max, fold=4, iterations=20):
     return random_search_cv.best_estimator_, random_search_cv.best_params_
 
 
-def ada_boost_classifier(x_train, y_train, no_estimators, fold=4, iterations=20):
+def ada_boost_classifier(x_train, y_train, no_estimators=10, fold=4, iterations=20):
     ada_boost = sklearn.ensemble.AdaBoostClassifier(random_state=0)
     params = {
-        "n_estimators": range(1, no_estimators + 1),
+        "n_estimators": range(1, max(no_estimators, 1) + 1),
         "algorithm": ['SAMME', 'SAMME.R']
     }
 
@@ -113,7 +113,7 @@ def GaussianNB(x_train, y_train, fold=4, iterations=20):
     random_search_cv = sklearn.model_selection.RandomizedSearchCV(nb, param_distributions=params, verbose=0,
                                                                   cv=fold, random_state=0, n_iter=iterations)
 
-    print("Training GaussianNB ...")
+    print("Training Gaussian Naive Bayes ...")
     random_search_cv.fit(x_train, y_train)
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
