@@ -150,9 +150,9 @@ def bike(test_size=0.2):
 
 
 def student(test_size=0.2):
-    data = pd.read_csv('data/regression/student/student-por.csv')
+    data = pd.read_csv('data/regression/student/student-por.csv', delimiter = ';')
 
-    x_train, x_test, y_train, y_test= sklearn.model_selection.train_test_split(data.iloc[:,1:16], data.iloc[:,16], random_state =0, test_size= test_size)
+    x_train, x_test, y_train, y_test= sklearn.model_selection.train_test_split(data.iloc[:,:30], data.iloc[:,32], random_state =0, test_size= test_size)
 
     enc = preprocessing.OrdinalEncoder()
     enc.fit(x_train.select_dtypes(include = object))
@@ -192,10 +192,31 @@ def gpu(test_size=0.2):
 
 def molecular(test_size=0.2):
 
-    data = pd.read_csv('data/regression/molecular/ACT4_competition_training.csv')
+    file = 'data/regression/molecular/ACT4_competition_training.csv'
+    with open(file) as f:
+        cols = f.readline().rstrip('\n').split(',')
 
-    #from the 4 runs, use the average as target
-    return data_util.normalize_split(x, y, test_size)
+    X = np.loadtxt(file, delimiter=',', usecols=range(2, len(cols)), skiprows=1, dtype=np.uint8)
+    y = np.loadtxt(file, delimiter=',', usecols=[1], skiprows=1)
+    np.savez('act4.npz', X, y)
 
+    file = 'data/regression/molecular/ACT2_competition_training.csv'
+    with open(file) as f:
+        cols = f.readline().rstrip('\n').split(',')
 
-####################################
+    X = np.loadtxt(file, delimiter=',', usecols=range(2, len(cols)), skiprows=1, dtype=np.uint8)
+    y = np.loadtxt(file, delimiter=',', usecols=[1], skiprows=1)
+    np.savez('act2.npz', X, y)
+
+    ac4= np.load('act4.npz')
+    ac2= np.load('act2.npz')
+
+    x4, y4 = ac4['arr_0'], ac4['arr_1']
+    x2, y2 = ac2['arr_0'], ac2['arr_1']
+
+    x4_train, x4_test, y4_train, y4_test = data_util.normalize_split(x4, y4, test_size)
+    x2_train, x2_test, y2_train, y2_test = data_util.normalize_split(x2, y2, test_size)
+
+    return x4_train, x4_test, y4_train, y4_test, x2_train, x2_test, y2_train, y2_test
+
+#########################################################################

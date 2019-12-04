@@ -7,6 +7,7 @@ import json
 import regression_cv
 import data_processing
 import constant
+from scipy import stats
 
 
 def export_result(result, filename):
@@ -33,6 +34,24 @@ def evaluate_regressor(x_train, x_test, y_train, y_test, model, params, dataset_
         constant.R2: test_r2
     }
 
+def evaluate_regressor2(x_train, x_test, y_train, y_test, model, params, dataset_name, model_name):
+    y_train_pred = model.predict(x_train)
+    y_pred = model.predict(x_test)
+
+    train_r = stats.pearsonr(y_train, y_train_pred)
+    test_r = stats.pearsonr(y_test, y_pred)
+
+    print("--{0}:".format(model_name))
+    print("\tTraining Pearsonr: {0:.10f}".format(train_r[0]))
+    print("\tTesting Pearsonr: {0:.10f}".format(test_r[0]))
+    if params is not None and len(params.keys()) > 0:
+        print("\tHyperparam:")
+        for hyperparam in params.keys():
+            print("\t\t {0}: {1}".format(hyperparam, params[hyperparam]))
+
+    return {
+        constant.PEARSON: test_r[0]
+    }
 
 def red_wine_quality():
     print("Started training linear regressor on red wine quality data set.")
@@ -82,7 +101,7 @@ def red_wine_quality():
 
 def QSAR():
     print("Started training linear regressor on QSAR aquatic toxicity data set.")
-    x_train, x_test, y_train, y_test = data_processing.red_wine_quality()
+    x_train, x_test, y_train, y_test = data_processing.qsar()
     result = {}
 
     # LR
@@ -179,7 +198,7 @@ def bike():
 
 def student():
     print("Started training linear regressor on student data set.")
-    x_train, x_test, y_train, y_test = data_processing.bike()
+    x_train, x_test, y_train, y_test = data_processing.student()
     result = {}
 
     # LR
@@ -227,7 +246,7 @@ def student():
 
 def concrete():
     print("Started training linear regressor on concrete data set.")
-    x_train, x_test, y_train, y_test = data_processing.bike()
+    x_train, x_test, y_train, y_test = data_processing.concrete()
     result = {}
 
     # LR
@@ -272,36 +291,36 @@ def concrete():
     export_result(result, "result/concrete.json")
 
 
-#################################################################################################################
+
 
 def gpu():
     print("Started training linear regressor on GPU data set.")
-    x_train, x_test, y_train, y_test = data_processing.bike()
+    x_train, x_test, y_train, y_test = data_processing.gpu()
     result = {}
 
     # LR
-    lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
-    result[constant.LR] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                             "GPU", "Linear Regression")
+    #lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
+    #result[constant.LR] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                         "GPU", "Linear Regression")
 
     # decision tree
-    lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=20)
-    result[constant.DECISION_TREE] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                                        "GPU", "Decision tree")
+    #lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=20)
+    #result[constant.DECISION_TREE] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                                    "GPU", "Decision tree")
 
     # Random Forest
-    lr_best_model, lr_params = regression_cv.random_forest(x_train, y_train, max_estimator=100, fold=3, iterations=20)
-    result[constant.RANDOM_FOREST] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                                        "GPU", "Random Forest")
+    #lr_best_model, lr_params = regression_cv.random_forest(x_train, y_train, max_estimator=100, fold=3, iterations=20)
+    #result[constant.RANDOM_FOREST] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                                    "GPU", "Random Forest")
 
     # SVM
-    lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
+    #lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
                                                  #['linear', 'poly', 'rbf', 'sigmoid'],
-                                                 ['linear'],
-                                                 0.01, 100, 1, 1000,
-                                                 fold=3, iterations=10)
-    result[constant.SVC] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                              "GPU", "SVM")
+    #                                             ['linear'],
+    #                                             0.01, 100, 1, 1000,
+    #                                             fold=3, iterations=10)
+    #result[constant.SVC] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                          "GPU", "SVM")
 
     # AdaBoost
     lr_best_model, lr_params = regression_cv.ada_boost_regression(x_train, y_train, no_estimators=50,
@@ -319,3 +338,55 @@ def gpu():
                                              "GPU", "NeuralNet")
 
     export_result(result, "result/GPU.json")
+
+######################################################################################
+
+def molecular():
+    print("Started training linear regressor on molecular data set.")
+    x_train, x_test, y_train, y_test, x2_train, x2_test, y2_train, y2_test = data_processing.molecular()
+    result = {}
+
+    # LR
+    lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
+    evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+                                             "molecular", "Linear Regression")
+
+    lr_best_model, lr_params = regression_cv.linear_regression(x2_train, y2_train, fold=3, iterations=20)
+    result[constant.LR] = evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
+                                             "molecular", "Linear Regression")
+
+    # decision tree
+    #lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=20)
+    #result[constant.DECISION_TREE] = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                                    "molecular", "Decision tree")
+
+    # Random Forest
+    #lr_best_model, lr_params = regression_cv.random_forest(x_train, y_train, max_estimator=100, fold=3, iterations=20)
+    #result[constant.RANDOM_FOREST] = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                                    "molecular", "Random Forest")
+
+    # SVM
+    #lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
+                                                 #['linear', 'poly', 'rbf', 'sigmoid'],
+    #                                             ['linear'],
+    #                                             0.01, 100, 1, 1000,
+    #                                             fold=3, iterations=10)
+    #result[constant.SVC] = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                          "molecular", "SVM")
+
+    # AdaBoost
+    #lr_best_model, lr_params = regression_cv.ada_boost_regression(x_train, y_train, no_estimators=50,
+    #                                                              fold=3, iterations=20)
+    #result[constant.ADABOOST] = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                               "molecular", "AdaBoost")
+
+    # NeuralNet
+    #lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
+    #                                                                 hidden_layer_sizes=[(100,),(10,)],
+    #                                                                 alphas=[0.01, 0.05, 0.5, 1],
+    #                                                                 max_iter=[10, 20, 50, 100],
+    #                                                                 fold=3, iterations=20)
+    #result[constant.NN] = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                         "molecular", "NeuralNet")
+
+    export_result(result, "result/molecular.json")
