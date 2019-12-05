@@ -34,6 +34,7 @@ def evaluate_regressor(x_train, x_test, y_train, y_test, model, params, dataset_
         constant.R2: test_r2
     }
 
+
 def evaluate_regressor2(x_train, x_test, y_train, y_test, model, params, dataset_name, model_name):
     y_train_pred = model.predict(x_train)
     y_pred = model.predict(x_test)
@@ -52,6 +53,7 @@ def evaluate_regressor2(x_train, x_test, y_train, y_test, model, params, dataset
     return {
         constant.PEARSON: test_r[0]**2
     }
+
 
 def red_wine_quality():
     print("Started training linear regressor on red wine quality data set.")
@@ -145,8 +147,6 @@ def QSAR():
     export_result(result, "result/regression/qsar.json")
 
 
-#QSAR()
-
 def bike():
     print("Started training on bike data set.")
     x_train, x_test, y_train, y_test = data_processing.bike()
@@ -194,8 +194,6 @@ def bike():
     export_result(result, "result/bike.json")
 
 
-
-
 def student():
     print("Started training linear regressor on student data set.")
     x_train, x_test, y_train, y_test = data_processing.student()
@@ -218,7 +216,7 @@ def student():
 
     # SVM
     lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
-                                                 #['linear', 'poly', 'rbf', 'sigmoid'],
+                                                 # ['linear', 'poly', 'rbf', 'sigmoid'],
                                                  ['sigmoid'],
                                                  0.01, 100, 1, 1000,
                                                  fold=3, iterations=10)
@@ -233,7 +231,7 @@ def student():
 
     # NeuralNet
     lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
-                                                                     hidden_layer_sizes=[(10,),(100,10,)],
+                                                                     hidden_layer_sizes=[(10,), (100, 5,)],
                                                                      alphas=[0.01, 0.05, 0.5, 1],
                                                                      max_iter=[10, 20, 50, 100],
                                                                      fold=3, iterations=20)
@@ -241,7 +239,6 @@ def student():
                                              "Student Grade", "NeuralNet")
 
     export_result(result, "result/student.json")
-
 
 
 def concrete():
@@ -266,8 +263,8 @@ def concrete():
 
     # SVM
     lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
-                                                 #['linear', 'poly', 'rbf', 'sigmoid'],
-                                                 ['linear', 'rbf', 'sigmoid'],
+                                                 # ['linear', 'poly', 'rbf', 'sigmoid'],
+                                                 ['linear'],
                                                  0.01, 100, 1, 1000,
                                                  fold=3, iterations=10)
     result[constant.SVC] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
@@ -280,17 +277,15 @@ def concrete():
                                                    "concrete", "AdaBoost")
 
     # NeuralNet
-    #lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
-    #                                                                 hidden_layer_sizes=[(10,), (100,)],
-    #                                                                 alphas=[0.01, 0.05, 0.5, 1],
-    #                                                                 max_iter=[10, 20, 50, 100],
-    #                                                                 fold=3, iterations=10)
-    #result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-    #                                         "concrete", "NeuralNet")
+    lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
+                                                                     hidden_layer_sizes=[(100,), (10,)],
+                                                                     alphas=[0.01, 0.05, 0.5, 1],
+                                                                     max_iter=[10, 20, 50, 100],
+                                                                     fold=3, iterations=20)
+    result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+                                             "concrete", "NeuralNet")
 
     export_result(result, "result/concrete.json")
-
-
 
 
 def gpu():
@@ -330,7 +325,7 @@ def gpu():
 
     # NeuralNet
     lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
-                                                                     hidden_layer_sizes=[(100,),(10,)],
+                                                                     hidden_layer_sizes=[(100,), (10,)],
                                                                      alphas=[0.01, 0.05, 0.5, 1],
                                                                      max_iter=[10, 20, 50, 100],
                                                                      fold=3, iterations=20)
@@ -338,6 +333,7 @@ def gpu():
                                              "GPU", "NeuralNet")
 
     export_result(result, "result/GPU.json")
+
 
 ######################################################################################
 
