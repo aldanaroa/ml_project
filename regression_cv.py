@@ -5,6 +5,7 @@ import sklearn.tree
 import sklearn.ensemble
 import sklearn.linear_model
 import sklearn.model_selection
+import sklearn.neural_network
 import scipy.stats
 
 
@@ -14,7 +15,7 @@ def linear_regression(x_train, y_train, fold=4, iterations=20):
     random_search_cv = sklearn.model_selection.RandomizedSearchCV(ls, param_distributions={}, verbose=1, cv=fold,
                                                                   random_state=0, n_iter=iterations)
 
-    print("Training SVR ...")
+    print("Training Linear Regression ...")
     random_search_cv.fit(x_train, y_train)
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
@@ -26,7 +27,7 @@ def decision_tree(x_train, y_train, max_depth=10, fold=4, iterations=20):
         "max_depth": range(1, max_depth + 1)
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(dtc, param_distributions=params, verbose=0, cv=fold,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(dtc, param_distributions=params, verbose=1, cv=fold,
                                                                   random_state=0, n_iter=min(max_depth, iterations))
     print("Training decision tree regression ...")
     random_search_cv.fit(x_train, y_train)
@@ -40,7 +41,7 @@ def random_forest(x_train, y_train, max_estimator=100, fold=4, iterations=20):
         "n_estimators": range(1, max_estimator + 1)
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(rf, param_distributions=params, verbose=0, cv=fold,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(rf, param_distributions=params, verbose=1, cv=fold,
                                                                   random_state=0, n_iter=min(max_estimator, iterations))
 
     print("Training random forest regression ...")
@@ -57,7 +58,7 @@ def SVR(x_train, y_train, kernels, C_min, C_max, gamma_min, gamma_max, fold=4, i
         "kernel": kernels
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=0, cv=fold,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=1, cv=fold,
                                                                   random_state=0, n_iter=iterations)
 
     print("Training SVR ...")
@@ -72,7 +73,7 @@ def ada_boost_regression(x_train, y_train, no_estimators, fold=4, iterations=20)
         "n_estimators": range(1, max(no_estimators, 1) + 1)
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(ada_boost, param_distributions=params, verbose=0,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(ada_boost, param_distributions=params, verbose=1,
                                                                   cv=fold, random_state=0, n_iter=iterations)
 
     print("Training Ada Boost ...")
@@ -97,7 +98,7 @@ def NeuralNetworkRegression(x_train, y_train,
         "max_iter": max_iter
     }
 
-    random_search_cv = sklearn.model_selection.RandomizedSearchCV(nn, param_distributions=params, verbose=0,
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(nn, param_distributions=params, verbose=1,
                                                                   cv=fold, random_state=0, n_iter=iterations)
 
     print("Training Neural Networks ...")
