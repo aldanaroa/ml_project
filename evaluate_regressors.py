@@ -11,6 +11,10 @@ from scipy import stats
 
 
 def export_result(result, filename):
+    keys = result.keys()
+    if len(keys) < 7:
+        print("Less than 8 evaluation results exported!!!")
+
     with open(filename, 'w') as outfile:
         json.dump(result, outfile)
 
@@ -31,7 +35,8 @@ def evaluate_regressor(x_train, x_test, y_train, y_test, model, params, dataset_
             print("\t\t {0}: {1}".format(hyperparam, params[hyperparam]))
 
     return {
-        constant.R2: test_r2
+        constant.R2: test_r2,
+     #   constant.HYPERPARAM: params
     }
 
 
@@ -93,7 +98,7 @@ def red_wine_quality():
     lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
                                                                      hidden_layer_sizes=[(), (10,)],
                                                                      alphas=[0.01, 0.05, 0.5, 1],
-                                                                     max_iter=[10, 20, 50, 100],
+                                                                     max_iter=[100, 200, 500, 1000],
                                                                      fold=3, iterations=20)
     result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                              "Wine quality", "NeuralNet")
@@ -182,15 +187,21 @@ def bike():
     result[constant.ADABOOST] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                    "Bike users", "AdaBoost")
 
-    # NeuralNet
-    lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
-                                                                     hidden_layer_sizes=[(10,),(100,)],
-                                                                     alphas=[0.01, 0.05, 0.5, 1],
-                                                                     max_iter=[10, 20, 50, 100],
-                                                                     fold=3, iterations=20)
-    result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                             "Bike users", "NeuralNet")
+    # NeuralNet (overflow)
+    #lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
+    #                                                                 hidden_layer_sizes=[(10,),(100,)],
+    #                                                                 alphas=[0.01, 0.05, 0.5, 1],
+    #                                                                 max_iter=[10, 20, 50, 100],
+    #                                                                 fold=3, iterations=20)
+    #result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                         "Bike users", "NeuralNet")
 
+    #GaussianProcessRegressor
+    #lr_best_model, lr_params = regression_cv.GPRegressor(x_train, y_train, fold=3, iterations=1)
+    #
+    #result[constant.GP] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                         "Bike users", "Gaussian process")
+    #
     export_result(result, "result/bike.json")
 
 
@@ -203,26 +214,26 @@ def student():
     lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
     result[constant.LR] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                              "Student Grade", "Linear Regression")
-
+    
     # decision tree
     lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=20)
     result[constant.DECISION_TREE] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                         "Student Grade", "Decision tree")
-
+    
     # Random Forest
     lr_best_model, lr_params = regression_cv.random_forest(x_train, y_train, max_estimator=100, fold=3, iterations=20)
     result[constant.RANDOM_FOREST] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                         "Student Grade", "Random Forest")
-
+    
     # SVM
     lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
                                                  # ['linear', 'poly', 'rbf', 'sigmoid'],
-                                                 ['sigmoid'],
+                                                 ['linear','rbf', 'sigmoid'],
                                                  0.01, 100, 1, 1000,
                                                  fold=3, iterations=10)
     result[constant.SVC] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                               "Student Grade", "SVM")
-
+    
     # AdaBoost
     lr_best_model, lr_params = regression_cv.ada_boost_regression(x_train, y_train, no_estimators=50,
                                                                   fold=3, iterations=20)
@@ -237,6 +248,12 @@ def student():
                                                                      fold=3, iterations=20)
     result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                              "Student Grade", "NeuralNet")
+
+    #GaussianProcessRegressor
+    lr_best_model, lr_params = regression_cv.GPRegressor(x_train, y_train, fold=3, iterations=3)
+
+    result[constant.GP] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+                                             "Student Grade", "Gaussian process")
 
     export_result(result, "result/student.json")
 
@@ -276,14 +293,20 @@ def concrete():
     result[constant.ADABOOST] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                    "concrete", "AdaBoost")
 
-    # NeuralNet
-    lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
-                                                                     hidden_layer_sizes=[(100,), (10,)],
-                                                                     alphas=[0.01, 0.05, 0.5, 1],
-                                                                     max_iter=[10, 20, 50, 100],
-                                                                     fold=3, iterations=20)
-    result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                             "concrete", "NeuralNet")
+    # NeuralNet (not finish)
+    #lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
+    #                                                                 hidden_layer_sizes=[(100,), (10,)],
+    #                                                                 alphas=[0.01, 0.05, 0.5, 1],
+    #                                                                 max_iter=[10, 20, 50, 100],
+    #                                                                 fold=3, iterations=20)
+    #result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                         "concrete", "NeuralNet")
+                                             
+     #GaussianProcessRegressor
+    lr_best_model, lr_params = regression_cv.GPRegressor(x_train, y_train, fold=3, iterations=10)
+
+    result[constant.GP] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+                                             "concrete", "Gaussian process")                                    
 
     export_result(result, "result/concrete.json")
 
@@ -293,21 +316,21 @@ def gpu():
     x_train, x_test, y_train, y_test = data_processing.gpu()
     result = {}
 
-    # LR
+     #LR
     lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
     result[constant.LR] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                              "GPU", "Linear Regression")
-
+    
     # decision tree
     lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=20)
     result[constant.DECISION_TREE] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                         "GPU", "Decision tree")
-
+    
     # Random Forest
     lr_best_model, lr_params = regression_cv.random_forest(x_train, y_train, max_estimator=100, fold=3, iterations=1)
     result[constant.RANDOM_FOREST] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                         "GPU", "Random Forest")
-
+    
     # SVM (not finish training)
     #lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
                                                  #['linear', 'poly', 'rbf', 'sigmoid'],
@@ -316,13 +339,13 @@ def gpu():
     #                                             fold=3, iterations=1)
     #result[constant.SVC] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
     #                                          "GPU", "SVM")
-
+    
     # AdaBoost
     lr_best_model, lr_params = regression_cv.ada_boost_regression(x_train, y_train, no_estimators=50,
                                                                   fold=3, iterations=20)
     result[constant.ADABOOST] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                    "GPU", "AdaBoost")
-
+    
     # NeuralNet
     lr_best_model, lr_params = regression_cv.NeuralNetworkRegression(x_train, y_train,
                                                                      hidden_layer_sizes=[(100,), (10,)],
@@ -331,7 +354,13 @@ def gpu():
                                                                      fold=3, iterations=20)
     result[constant.NN] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                              "GPU", "NeuralNet")
-
+    
+    #GaussianProcessRegressor (error in matrix operation)
+    #lr_best_model, lr_params = regression_cv.GPRegressor(x_train, y_train, fold=3, iterations=5)
+    #
+    #result[constant.GP] = evaluate_regressor(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                         "GPU", "Gaussian process")                                    
+    
     export_result(result, "result/GPU.json")
 
 
@@ -343,31 +372,31 @@ def molecular():
     result = {}
 
     # LR
-    lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
-    pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                             "molecular", "Linear Regression")['pearson']
-
-    lr_best_model, lr_params = regression_cv.linear_regression(x2_train, y2_train, fold=3, iterations=20)
-    result[constant.LR] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
-                                             "molecular", "Linear Regression")['pearson'] )/2
-
-    # decision tree
-    lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=10)
-    pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                                    "molecular", "Decision tree")['pearson']
-
-    lr_best_model, lr_params = regression_cv.decision_tree(x2_train, y2_train, max_depth=20, fold=3, iterations=5)
-    result[constant.DECISION_TREE] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
-                                                        "molecular", "Decision tree")['pearson']/2)
-
-    # Random Forest
-    lr_best_model, lr_params = regression_cv.random_forest(x_train, y_train, max_estimator=100, fold=3, iterations=10)
-    pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
-                                                        "molecular", "Random Forest")['pearson']
-
-    lr_best_model, lr_params = regression_cv.random_forest(x2_train, y2_train, max_estimator=100, fold=3, iterations=2)
-    result[constant.RANDOM_FOREST] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
-                                                        "molecular", "Random Forest")['pearson'])/2
+   lr_best_model, lr_params = regression_cv.linear_regression(x_train, y_train, fold=3, iterations=20)
+   pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+                                            "molecular", "Linear Regression")['pearson']
+   
+   lr_best_model, lr_params = regression_cv.linear_regression(x2_train, y2_train, fold=3, iterations=20)
+   result[constant.LR] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
+                                            "molecular", "Linear Regression")['pearson'] )/2
+   
+   # decision tree
+   lr_best_model, lr_params = regression_cv.decision_tree(x_train, y_train, max_depth=20, fold=3, iterations=10)
+   pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+                                                   "molecular", "Decision tree")['pearson']
+   
+   lr_best_model, lr_params = regression_cv.decision_tree(x2_train, y2_train, max_depth=20, fold=3, iterations=5)
+   result[constant.DECISION_TREE] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
+                                                       "molecular", "Decision tree")['pearson']/2)
+   
+   # Random Forest
+   lr_best_model, lr_params = regression_cv.random_forest(x_train, y_train, max_estimator=100, fold=3, iterations=10)
+   pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+                                                       "molecular", "Random Forest")['pearson']
+   
+   lr_best_model, lr_params = regression_cv.random_forest(x2_train, y2_train, max_estimator=100, fold=3, iterations=2)
+   result[constant.RANDOM_FOREST] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
+                                                       "molecular", "Random Forest")['pearson'])/2
 
     # SVM
     #lr_best_model, lr_params = regression_cv.SVR(x_train, y_train,
@@ -393,7 +422,7 @@ def molecular():
                                                                   fold=3, iterations=10)
     pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
                                                    "molecular", "AdaBoost")['pearson']
-
+    
     lr_best_model, lr_params = regression_cv.ada_boost_regression(x2_train, y2_train, no_estimators=50,
                                                                   fold=3, iterations=5)
     result[constant.ADABOOST] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
@@ -415,5 +444,16 @@ def molecular():
     #                                                                 fold=3, iterations=10)
     #result[constant.NN] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
     #                                         "molecular", "NeuralNet")['pearson'])/2
-
-    export_result(result, "result/molecular.json")
+    
+    #GaussianProcessRegressor (not finish training)
+    #lr_best_model, lr_params = regression_cv.GPRegressor(x_train, y_train, fold=3, iterations=1)
+    #
+    #pe = evaluate_regressor2(x_train, x_test, y_train, y_test, lr_best_model, lr_params,
+    #                                        "molecular", "Gassian process")['pearson']
+    #
+    #lr_best_model, lr_params = regression_cv.GPRegressor(x2_train, y2_train, fold=3, iterations=1)
+    #
+    #result[constant.GP] = (pe + evaluate_regressor2(x2_train, x2_test, y2_train, y2_test, lr_best_model, lr_params,
+    #                                         "molecular", "Gaussian process")['pearson'])/2
+    #
+    #export_result(result, "result/molecular.json")

@@ -1,11 +1,12 @@
 # Creator: Hoang-Dung Do
 
-import numpy as np
+import math
 import sklearn.tree
 import sklearn.ensemble
 import sklearn.linear_model
 import sklearn.model_selection
 import sklearn.neural_network
+import sklearn.gaussian_process
 import scipy.stats
 
 
@@ -77,6 +78,35 @@ def ada_boost_regression(x_train, y_train, no_estimators, fold=4, iterations=20)
                                                                   cv=fold, random_state=0, n_iter=iterations)
 
     print("Training Ada Boost ...")
+    random_search_cv.fit(x_train, y_train)
+
+    return random_search_cv.best_estimator_, random_search_cv.best_params_
+
+
+def GPRegressor(x_train, y_train, fold=4, iterations=20):
+    kernels = [
+        #sklearn.gaussian_process.kernels.RBF(length_scale=0.2),
+        sklearn.gaussian_process.kernels.RBF(length_scale=1),
+        sklearn.gaussian_process.kernels.RBF(length_scale=5),
+        sklearn.gaussian_process.kernels.RationalQuadratic(length_scale=0.2, alpha=0.02),
+        #sklearn.gaussian_process.kernels.RationalQuadratic(length_scale=1, alpha=0.02),
+        sklearn.gaussian_process.kernels.RationalQuadratic(length_scale=5, alpha=1),
+        #sklearn.gaussian_process.kernels.ExpSineSquared(length_scale=1, periodicity=1),
+        #sklearn.gaussian_process.kernels.ExpSineSquared(length_scale=1, periodicity=5),
+        #sklearn.gaussian_process.kernels.ExpSineSquared(length_scale=0.5, periodicity=5),
+        #sklearn.gaussian_process.kernels.RBF(length_scale=5) *
+        #sklearn.gaussian_process.kernels.ExpSineSquared(length_scale=1, periodicity=1)
+    ]
+    svc = sklearn.gaussian_process.GaussianProcessRegressor()
+    params = {
+        "kernel": kernels,
+        "alpha": scipy.stats.reciprocal(math.exp(-10), math.exp(-7))
+    }
+
+    random_search_cv = sklearn.model_selection.RandomizedSearchCV(svc, param_distributions=params, verbose=1, cv=fold,
+                                                                  random_state=0, n_iter=iterations)
+
+    print("Training GP ...")
     random_search_cv.fit(x_train, y_train)
 
     return random_search_cv.best_estimator_, random_search_cv.best_params_
